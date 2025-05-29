@@ -1,0 +1,146 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Coin Toss Probability Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef7ff;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #003366;
+      margin-bottom: 30px;
+    }
+    .row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .coin {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 5px;
+      font-weight: bold;
+      color: white;
+      font-size: 18px;
+      transition: background 0.3s;
+    }
+    .yes {
+      background: green;
+    }
+    .no {
+      background: red;
+    }
+    button {
+      margin: 0 10px;
+      padding: 10px 16px;
+      font-size: 16px;
+      background-color: #FF4500;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e03e00;
+    }
+    .counter {
+      width: 50px;
+      font-size: 18px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Coin Toss Probability Demo</h1>
+
+  <div id="container"></div>
+
+  <script>
+    const coinConfigs = [5, 6, 5, 6, 5, 6, 5];
+
+    function createRow(numCoins, rowIndex) {
+      const row = document.createElement("div");
+      row.className = "row";
+      row.id = `row-${rowIndex}`;
+
+      // Coin containers
+      const coins = [];
+      for (let i = 0; i < numCoins; i++) {
+        const coin = document.createElement("div");
+        coin.className = "coin";
+        coin.innerText = "-";
+        row.appendChild(coin);
+        coins.push(coin);
+      }
+
+      // Gen 1 button
+      const btnGen1 = document.createElement("button");
+      btnGen1.innerText = "Gen 1";
+      btnGen1.onclick = () => {
+        coins.forEach(coin => {
+          const isYes = Math.random() < 0.5;
+          coin.innerText = isYes ? "YES" : "NO";
+          coin.className = "coin " + (isYes ? "yes" : "no");
+        });
+        counter.innerText = "-";
+      };
+      row.appendChild(btnGen1);
+
+      // Gen Yes button
+      const btnGenYes = document.createElement("button");
+      btnGenYes.innerText = "Gen Yes";
+      btnGenYes.onclick = () => {
+        let attempts = 0;
+        const generateUntilYes = () => {
+          attempts++;
+          const results = coins.map(() => Math.random() < 0.5);
+          const allYes = results.every(Boolean);
+
+          // Update coin visuals
+          results.forEach((isYes, i) => {
+            coins[i].innerText = isYes ? "YES" : "NO";
+            coins[i].className = "coin " + (isYes ? "yes" : "no");
+          });
+
+          if (!allYes) {
+            requestAnimationFrame(generateUntilYes);
+          } else {
+            counter.innerText = attempts;
+          }
+        };
+        generateUntilYes();
+      };
+      row.appendChild(btnGenYes);
+
+      // Counter display
+      const counter = document.createElement("div");
+      counter.className = "counter";
+      counter.innerText = "-";
+      row.appendChild(counter);
+
+      return row;
+    }
+
+    const container = document.getElementById("container");
+    coinConfigs.forEach((count, index) => {
+      const row = createRow(count, index);
+      container.appendChild(row);
+    });
+  </script>
+</body>
+</html>
